@@ -9,10 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       restaurant.belongsTo(models.user);
-      restaurant.belongsToMany(models.recipe, {
-        through: "recipeRestaurant",
-        foreignKey: "restaurantId",
-      });
+      restaurant.hasMany(models.recipe);
     }
   }
   restaurant.init(
@@ -22,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       longitude: DataTypes.STRING,
       imageUrl: DataTypes.STRING,
       userId: DataTypes.INTEGER,
+      recipeId: DataTypes.INTEGER,
       name: DataTypes.STRING,
     },
     {

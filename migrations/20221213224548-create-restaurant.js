@@ -20,6 +20,15 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      recipeId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: "recipes",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       name: {
         type: Sequelize.STRING,
       },
