@@ -13,7 +13,7 @@ const router = new Router();
 
 router.get("/", async (req, res) => {
   try {
-    const recipes = await Recipe.findAll({ include: [Region] });
+    const recipes = await Recipe.findAll();
     res.send(recipes);
   } catch (e) {
     console.log(e);
@@ -114,11 +114,11 @@ router.get("/restaurant/:recipeId", async (req, res) => {
     next(e);
   }
 });
-router.get("/favorite/:recipeId", authMiddleWare, async (req, res) => {
+router.get("/favorite/:recipeId", authMiddleWare, async (req, res, next) => {
   try {
-    console.log("HIIIIIIII33333333IIIIIIIIIIIIIIIII");
-    console.log(req.params.recipeId);
-    console.log(req.user.id);
+    // console.log("HIIIIIIII33333333IIIIIIIIIIIIIIIII");
+    // console.log(req.params.recipeId);
+    // console.log(req.user.id);
     const favorite = await Favorite.findAll({
       where: { recipeId: req.params.recipeId, userId: req.user.id },
     });
@@ -128,14 +128,17 @@ router.get("/favorite/:recipeId", authMiddleWare, async (req, res) => {
     next(e);
   }
 });
-// router.post("/restaurant/", async (req, res, next) => {
-//   try {
-//     const newRestaurant = req.body;
-//     const createRestauant = await Restaurants.create(newRestaurant);
-//     res.send(createRestauant);
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
+router.post("/restaurant/", authMiddleWare, async (req, res, next) => {
+  try {
+    const newRestaurant = req.body;
+    newRestaurant.userId = req.user.id;
+    const createRestauant = await Restaurants.create(newRestaurant);
+
+    res.send(createRestauant);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
 
 module.exports = router;

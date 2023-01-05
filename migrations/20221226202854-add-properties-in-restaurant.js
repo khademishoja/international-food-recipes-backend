@@ -23,6 +23,11 @@ module.exports = {
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.removeColumn("latitude", "longitude", "imageUrl");
+    await queryInterface.removeColumn(
+      "restaurants",
+      "latitude",
+      "longitude",
+      "imageUrl"
+    );
   },
 };
