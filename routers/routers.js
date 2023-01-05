@@ -5,7 +5,7 @@ const Region = require("../models").region;
 const authMiddleWare = require("../auth/middleware");
 const User = require("../models").user;
 const Comments = require("../models").comment;
-const RestaurantRecipes = require("../models").recipeRestaurant;
+// const RestaurantRecipes = require("../models").recipeRestaurant;
 const Restaurants = require("../models").restaurant;
 const Favorite = require("../models").favorite;
 // User = require("../models").user;
@@ -13,7 +13,7 @@ const router = new Router();
 
 router.get("/", async (req, res) => {
   try {
-    const recipes = await Recipe.findAll({ include: [Region] });
+    const recipes = await Recipe.findAll();
     res.send(recipes);
   } catch (e) {
     console.log(e);
@@ -105,9 +105,8 @@ router.get("/restaurant/:recipeId", async (req, res) => {
   try {
     // console.log("HIIIIIIIIIIIIIIIIIIIIIIIII");
     // console.log(req.params.recipeId);
-    const restaurant = await RestaurantRecipes.findAll({
+    const restaurant = await Restaurants.findAll({
       where: { recipeId: req.params.recipeId },
-      include: [Restaurants],
     });
     res.send(restaurant);
   } catch (e) {
@@ -115,15 +114,27 @@ router.get("/restaurant/:recipeId", async (req, res) => {
     next(e);
   }
 });
-router.get("/favorite/:recipeId", authMiddleWare, async (req, res) => {
+router.get("/favorite/:recipeId", authMiddleWare, async (req, res, next) => {
   try {
-    console.log("HIIIIIIII33333333IIIIIIIIIIIIIIIII");
-    console.log(req.params.recipeId);
-    console.log(req.user.id);
+    // console.log("HIIIIIIII33333333IIIIIIIIIIIIIIIII");
+    // console.log(req.params.recipeId);
+    // console.log(req.user.id);
     const favorite = await Favorite.findAll({
       where: { recipeId: req.params.recipeId, userId: req.user.id },
     });
     res.send(favorite.length > 0);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
+router.post("/restaurant/", authMiddleWare, async (req, res, next) => {
+  try {
+    const newRestaurant = req.body;
+    newRestaurant.userId = req.user.id;
+    const createRestauant = await Restaurants.create(newRestaurant);
+
+    res.send(createRestauant);
   } catch (e) {
     console.log(e);
     next(e);
