@@ -53,6 +53,7 @@ router.get("/newrecipe", async (req, res, next) => {
     // console.log(req.body);
   } catch (e) {
     console.log(e);
+    next(e);
   }
 });
 router.get("/comments/:recipeId", async (req, res, next) => {
@@ -64,6 +65,7 @@ router.get("/comments/:recipeId", async (req, res, next) => {
     // console.log(req.body);
   } catch (e) {
     console.log(e);
+    next(e);
   }
 });
 router.post("/comments/", async (req, res, next) => {
@@ -75,6 +77,7 @@ router.post("/comments/", async (req, res, next) => {
     res.send(createComment);
   } catch (e) {
     console.log(e);
+    next(e);
   }
 });
 router.put("/recipe", authMiddleWare, async (req, res, next) => {
@@ -101,7 +104,7 @@ router.put("/recipe", authMiddleWare, async (req, res, next) => {
     next(e);
   }
 });
-router.get("/restaurant/:recipeId", async (req, res) => {
+router.get("/restaurant/:recipeId", async (req, res, next) => {
   try {
     // console.log("HIIIIIIIIIIIIIIIIIIIIIIIII");
     // console.log(req.params.recipeId);
@@ -135,6 +138,18 @@ router.post("/restaurant/", authMiddleWare, async (req, res, next) => {
     const createRestauant = await Restaurants.create(newRestaurant);
 
     res.send(createRestauant);
+  } catch (e) {
+    console.log(e);
+    next(e);
+  }
+});
+router.get("/favorites/", authMiddleWare, async (req, res, next) => {
+  try {
+    const favorite = await Favorite.findAll({
+      include: [Recipe],
+      // where: { userId: req.user.id, },
+    });
+    res.send(favorite);
   } catch (e) {
     console.log(e);
     next(e);
