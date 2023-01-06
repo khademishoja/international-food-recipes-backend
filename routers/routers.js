@@ -60,7 +60,7 @@ router.get("/comments/:recipeId", async (req, res, next) => {
   const id = req.params.recipeId;
   // const user = await User.findByPk(userId);
   try {
-    const response = await Comments.findAll({ where: { recipeId: id } });
+    const response = await Comments.findAll({ where: { recipeId: id },include:[User] });
     res.send(response);
     // console.log(req.body);
   } catch (e) {
@@ -68,11 +68,10 @@ router.get("/comments/:recipeId", async (req, res, next) => {
     next(e);
   }
 });
-router.post("/comments/", async (req, res, next) => {
-  // const id = req.params.recipeId;
-  // const user = await User.findByPk(userId);
-  try {
+router.post("/comments/",authMiddleWare, async (req, res, next) => {
+ try {
     const newComment = req.body;
+    newComment.userId=req.user.id;
     const createComment = await Comments.create(newComment);
     res.send(createComment);
   } catch (e) {
@@ -104,10 +103,8 @@ router.put("/recipe", authMiddleWare, async (req, res, next) => {
     next(e);
   }
 });
-router.get("/restaurant/:recipeId", async (req, res, next) => {
-  try {
-    // console.log("HIIIIIIIIIIIIIIIIIIIIIIIII");
-    // console.log(req.params.recipeId);
+router.get("/restaurant/:recipeId", async (req, res,next) => {
+  try { 
     const restaurant = await Restaurants.findAll({
       where: { recipeId: req.params.recipeId },
     });
@@ -118,10 +115,7 @@ router.get("/restaurant/:recipeId", async (req, res, next) => {
   }
 });
 router.get("/favorite/:recipeId", authMiddleWare, async (req, res, next) => {
-  try {
-    // console.log("HIIIIIIII33333333IIIIIIIIIIIIIIIII");
-    // console.log(req.params.recipeId);
-    // console.log(req.user.id);
+  try { 
     const favorite = await Favorite.findAll({
       where: { recipeId: req.params.recipeId, userId: req.user.id },
     });
